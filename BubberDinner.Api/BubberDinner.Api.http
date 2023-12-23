@@ -1,0 +1,22 @@
+@BubberDinner.Api_HostAddress = https://localhost:7262
+
+
+###
+
+POST {{BubberDinner.Api_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+  //LoginRequest
+}
+
+###
+
+POST {{BubberDinner.Api_HostAddress}}/auth/register
+Content-Type: application/json
+
+{
+  //RegisterRequest
+}
+
+###
