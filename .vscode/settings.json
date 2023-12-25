@@ -1,4 +1,5 @@
 {
-  "editor.fontFamily": "Consolas, 'Hack Nerd Font', monospace",
-  "editor.fontSize": 12
+  "editor.fontFamily": "Hack Nerd Font, 'Fira Code', monospace",
+  "editor.fontSize": 12,
+  "editor.fontLigatures": true
 }

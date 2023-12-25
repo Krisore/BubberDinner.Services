@@ -6,12 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using BubberDinner.Infrastructure.Configure.Authentication;
+using BubberDinner.Application.Common.Interface.Persistent;
+using BubberDinner.Infrastructure.Persistent;
 namespace BubberDinner.Infrastructure;
 
-public static  class Program
+public static class Program
 {
     public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         ConfigurationManager configuration)
     {
         services.Configure<JwtSettings>(options =>
@@ -20,6 +22,8 @@ public static  class Program
         });
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+        services.AddSingleton<IUserRepository, UserRepository>();
         return services;
     }
 }

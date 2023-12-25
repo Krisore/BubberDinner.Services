@@ -27,10 +27,10 @@ public class AuthenticationController : ControllerBase
         );
         var response = new AuthenticationResponse
         (
-            command.Id,
-            command.FirstName,
-            command.LastName,
-            command.Email,
+            command.User.Id,
+            command.User.FirstName,
+            command.User.LastName,
+            command.User.Email,
             command.Token
         );
 
@@ -47,10 +47,10 @@ public class AuthenticationController : ControllerBase
         );
         var response = new AuthenticationResponse
         (
-            command.Id,
-            command.FirstName,
-            command.LastName,
-            command.Email,
+            command.User.Id,
+            command.User.FirstName,
+            command.User.LastName,
+            command.User.Email,
             command.Token
         );
         return Ok(response);
