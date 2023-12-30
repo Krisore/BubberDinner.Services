@@ -1,24 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0"/>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0"/>
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\BubberDinner.Application\BubberDinner.Application.csproj" />
+    <ProjectReference Include="..\BubberDinner.Application\BubberDinner.Application.csproj"/>
   </ItemGroup>
-
   <ItemGroup>
-    <Folder Include="Persistent\" />
+    <Folder Include="Persistent\"/>
   </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
 </Project>

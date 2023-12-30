@@ -11,8 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddInfrastructure(builder.Configuration);
     }
     #endregion
-
-
 }
 
 var app = builder.Build();
@@ -25,6 +23,14 @@ var app = builder.Build();
     }
     app.UseExceptionHandler("/error");
     app.UseHttpsRedirection();
+
+    {
+        #region Authorizatuion / Authentication Middleware
+        app.UseAuthentication();
+        app.UseAuthorization();
+        #endregion
+    }
+
     app.MapControllers();
     app.Run();
 
