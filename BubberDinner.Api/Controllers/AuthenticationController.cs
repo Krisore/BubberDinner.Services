@@ -1,14 +1,15 @@
 ﻿using BubberDinner.Application.Authentication;
 using BubberDinner.Contract.Authentication.Request;
 using BubberDinner.Contract.Authentication.Response;
+using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
+using static BubberDinner.Domain.Common.Errors.Errors;
 
 namespace BubberDinner.Api.Controllers;
 
 
 [Route("auth")]
-[ApiController]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController : ApiBaseController
 {
     private readonly IAuthenticationService _authenticationService;
     public AuthenticationController(IAuthenticationService authenticationService)
@@ -18,34 +19,44 @@ public class AuthenticationController : ControllerBase
     [HttpPost("register")]
     public IActionResult Register(RegisterRequest request)
     {
-        var command = _authenticationService.Register
+        ErrorOr<AuthenticationResult> command = _authenticationService.Register
         (
             request.FirstName,
             request.LastName,
             request.Email,
             request.Password
         );
-        var response = new AuthenticationResponse
-        (
-            command.User.Id,
-            command.User.FirstName,
-            command.User.LastName,
-            command.User.Email,
-            command.Token
+        return command.Match(
+            command => Ok(MapAuthResult(command)),
+            errors => Problem(errors)
         );
-
-        return Ok(response);
     }
 
     [HttpPost("login")]
     public IActionResult Login(LoginRequest request)
     {
-        var command = _authenticationService.Login
+        ErrorOr<AuthenticationResult> command = _authenticationService.Login
         (
             request.Email,
             request.Password
         );
-        var response = new AuthenticationResponse
+
+        if (command.IsError && command.FirstError == Authentication.InvalidCredentials)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: "Invalid credentials"
+            );
+        }
+        return command.Match(
+            command => Ok(MapAuthResult(command)),
+            errors => Problem(errors)
+        );
+    }
+
+    private static AuthenticationResponse MapAuthResult(AuthenticationResult command)
+    {
+        return new AuthenticationResponse
         (
             command.User.Id,
             command.User.FirstName,
@@ -53,6 +64,6 @@ public class AuthenticationController : ControllerBase
             command.User.Email,
             command.Token
         );
-        return Ok(response);
     }
+
 }

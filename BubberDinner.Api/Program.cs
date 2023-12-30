@@ -1,5 +1,8 @@
+using BubberDinner.Api.Commons.Errors;
 using BubberDinner.Application;
 using BubberDinner.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 {
     #region Architecture Layer
@@ -10,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
     #endregion
 
     builder.Services.AddControllers();
-
+    builder.Services.AddSingleton<ProblemDetailsFactory, BubberDinnerProblemDetailsFactory>();
     // Add services to the container.
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -25,7 +28,7 @@ var app = builder.Build();
         app.UseSwagger();
         app.UseSwaggerUI();
     }
-
+    app.UseExceptionHandler("/error");
     app.UseHttpsRedirection();
     app.MapControllers();
     app.Run();
