@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Options;
+using BubberDinner.Application.Common.Interface.Menus;
+using BubberDinner.Infrastructure.Persistent.Repositories;
 namespace BubberDinner.Infrastructure;
 
 public static class Program
@@ -19,9 +21,16 @@ public static class Program
         this IServiceCollection services,
         ConfigurationManager configuration)
     {
+        services.AddAuth(configuration)
+                .AddPersistance();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        return services;
+    }
+
+    public static IServiceCollection AddPersistance(this IServiceCollection services)
+    {
         services.AddSingleton<IUserRepository, UserRepository>();
-        services.AddAuth(configuration);
+        services.AddSingleton<IMenuRepository, MenuRespository>();
         return services;
     }
     public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
