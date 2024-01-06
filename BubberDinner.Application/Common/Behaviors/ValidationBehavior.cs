@@ -6,9 +6,8 @@ using FluentValidation.Results;
 using MediatR;
 
 namespace BubberDinner.Application.Common.Behaviors;
-
-
-public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class ValidationBehavior<TRequest, TResponse> :
+IPipelineBehavior<TRequest, TResponse>
 where TRequest : IRequest<TResponse>
 where TResponse : IErrorOr
 {

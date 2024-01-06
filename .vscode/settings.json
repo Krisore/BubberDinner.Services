@@ -1,5 +1,5 @@
 {
-  "editor.fontFamily": "'Fira Code', Hack Nerd Font, monospace",
+  "editor.fontFamily": "'Hack Nerd Font', 'Fira Code', monospace",
   "editor.fontSize": 12,
   "editor.fontLigatures": true,
   "DevChat.PythonForChat": "c:\\Users\\kriso\\.vscode\\extensions\\merico.devchat-0.1.37\\tools\\python-3.11.6-embed-amd64\\python.exe",

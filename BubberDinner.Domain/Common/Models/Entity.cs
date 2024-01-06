@@ -4,7 +4,7 @@ namespace BubberDinner.Domain.Models;
 public abstract class Entity<TId> : IEquatable<Entity<TId>>
 where TId : notnull
 {
-    public TId Id { get; private set; }
+    public TId Id { get; protected set; }
     protected Entity(TId id)
     {
         Id = id;

@@ -4,6 +4,8 @@
 
 This model is for Menu a Aggreate root.
 
+### Behavior
+
 ```csharp
 class Menu 
 {
@@ -14,12 +16,13 @@ class Menu
 }
 ```
 
+### Models
+
 ```json
 {
     "id" : "guid",
     "name" : "string",
     "description" : "string",
-    "averageRating" : 4.5,
     "sections" : [
         {
             "id" : "guid",
@@ -35,10 +38,6 @@ class Menu
             ]
         }
     ],
-    "createDateTime" : "datetime",
-    "createdBy": "string",
-    "modifyDateTime" : "datetime",
-    "modifydBy": "string",
     "hostId" : "guid",
     "dinnerIds" :[
         "guid",
@@ -48,6 +47,11 @@ class Menu
         "guid",
         "guid",
     ],
+    "averageRating" : 4.5,
+    "createDateTime" : "datetime",
+    "createdBy": "string",
+    "modifyDateTime" : "datetime",
+    "modifydBy": "string",
     "deletedDateTime" : "datetime",
     "deletedBy": "string",
 }
