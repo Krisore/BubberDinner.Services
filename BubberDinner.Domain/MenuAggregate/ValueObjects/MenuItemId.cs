@@ -19,4 +19,9 @@ public class MenuItemId : ValueObject
     {
         yield return Value;
     }
+
+    public static MenuItemId Create(Guid value)
+    {
+        return new MenuItemId(value);
+    }
 }

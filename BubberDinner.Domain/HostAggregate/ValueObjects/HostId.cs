@@ -24,4 +24,9 @@ public class HostId : ValueObject
     {
         yield return Value;
     }
+
+    public static HostId Create(Guid value)
+    {
+        return new HostId(value);
+    }
 }
