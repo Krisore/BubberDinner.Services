@@ -13,6 +13,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using BubberDinner.Application.Common.Interface.Menus;
 using BubberDinner.Infrastructure.Persistent.Repositories;
+using Microsoft.EntityFrameworkCore;
 namespace BubberDinner.Infrastructure;
 
 public static class Program
@@ -22,15 +23,19 @@ public static class Program
         ConfigurationManager configuration)
     {
         services.AddAuth(configuration)
-                .AddPersistance();
+                .AddRepositories(configuration);
+
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         return services;
     }
-
-    public static IServiceCollection AddPersistance(this IServiceCollection services)
+    public static IServiceCollection AddRepositories(this IServiceCollection services, ConfigurationManager configuration)
     {
-        services.AddSingleton<IUserRepository, UserRepository>();
-        services.AddSingleton<IMenuRepository, MenuRespository>();
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        });
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IMenuRepository, MenuRespository>();
         return services;
     }
     public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
