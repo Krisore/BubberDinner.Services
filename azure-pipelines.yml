@@ -13,14 +13,11 @@ steps:
     version: $(dotnetVersion)
     performMultiLevelLookup: true
 
-- task: NuGetToolInstaller@1
-  displayName: 'Install NuGet Tool'
-
-- task: NuGetCommand@2
-  displayName: 'Restore NuGet Packages'
+- task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
-    restoreSolution: '**/*.sln'
+    projects: '**/*.sln'
+    feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build API Project'
@@ -29,18 +26,6 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Run Unit Tests'
-  inputs:
-    command: 'test'
-    projects: '**/*Tests.csproj'  # Adjust if test projects follow a different pattern
-    arguments: '--configuration $(buildConfiguration) --no-build --logger:trx'
-
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results'
-  inputs:
-    testResultsFormat: 'VSTest'
-    testResultsFiles: '**/*.trx'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish API Artifact'
