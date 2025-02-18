@@ -1,8 +1,3 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-
 trigger:
 - master
 
@@ -13,6 +8,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  system.debug: true
 
 steps:
 - task: NuGetToolInstaller@1
@@ -24,14 +20,39 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(Build.ArtifactStagingDirectory)"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+# Ensure artifact staging directory exists
+- task: Bash@3
+  displayName: 'Ensure artifact staging directory exists'
+  inputs:
+    targetType: 'inline'
+    script: |
+      mkdir -p "$(Build.ArtifactStagingDirectory)"
+
+# Run analysis task
 - task: runAnalysisTask@0
+  displayName: 'Run Analysis Task'
   inputs:
     projectName: 'Bubber Dinner API'
     sourceDirectory: '$(Build.SourcesDirectory)'
     outputFilePath: '$(Build.ArtifactStagingDirectory)/technical-documentation.json'
+
+# Validate output file
+- task: Bash@3
+  displayName: 'Check if output file exists'
+  inputs:
+    targetType: 'inline'
+    script: |
+      if [ -f "$(Build.ArtifactStagingDirectory)/technical-documentation.json" ]; then
+        echo "Output file exists."
+      else
+        echo "Output file does not exist."
+        exit 1
+      fi
+
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
