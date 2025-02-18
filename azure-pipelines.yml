@@ -4,7 +4,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  dotnetVersion: '7.0.x'  # Specify the .NET version your API uses
+  dotnetVersion: '8.0.x'  # Specify the .NET version your API uses
 
 steps:
 - task: UseDotNet@2
