@@ -1,59 +1,63 @@
-trigger:
-- master
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  system.debug: true
+  dotnetVersion: '7.0.x'  # Specify the .NET version your API uses
 
 steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    version: $(dotnetVersion)
+    performMultiLevelLookup: true
+
 - task: NuGetToolInstaller@1
+  displayName: 'Install NuGet Tool'
 
 - task: NuGetCommand@2
+  displayName: 'Restore NuGet Packages'
   inputs:
-    restoreSolution: '$(solution)'
+    command: 'restore'
+    restoreSolution: '**/*.sln'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: 'Build API Project'
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(Build.ArtifactStagingDirectory)"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
 
-# Ensure artifact staging directory exists
-- task: Bash@3
-  displayName: 'Ensure artifact staging directory exists'
+- task: DotNetCoreCLI@2
+  displayName: 'Run Unit Tests'
   inputs:
-    targetType: 'inline'
-    script: |
-      mkdir -p "$(Build.ArtifactStagingDirectory)"
+    command: 'test'
+    projects: '**/*Tests.csproj'  # Adjust if test projects follow a different pattern
+    arguments: '--configuration $(buildConfiguration) --no-build --logger:trx'
 
-# Run analysis task
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '**/*.trx'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish API Artifact'
+  inputs:
+    command: 'publish'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    publishWebProjects: false
+    zipAfterPublish: true
 - task: runAnalysisTask@0
-  displayName: 'Run Analysis Task'
   inputs:
     projectName: 'Bubber Dinner API'
     sourceDirectory: '$(Build.SourcesDirectory)'
     outputFilePath: '$(Build.ArtifactStagingDirectory)/technical-documentation.json'
-
-# Validate output file
-- task: Bash@3
-  displayName: 'Check if output file exists'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Build Artifacts'
   inputs:
-    targetType: 'inline'
-    script: |
-      if [ -f "$(Build.ArtifactStagingDirectory)/technical-documentation.json" ]; then
-        echo "Output file exists."
-      else
-        echo "Output file does not exist."
-        exit 1
-      fi
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
