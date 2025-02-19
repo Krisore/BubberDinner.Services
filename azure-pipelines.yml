@@ -36,6 +36,7 @@ steps:
     publishWebProjects: false
     zipAfterPublish: true
 - task: runAnalysisTask@0
+  displayName: Run Analysis Task - For Technical Documentation
   inputs:
     projectName: 'Bubber Dinner API'
     sourceDirectory: '$(Build.SourcesDirectory)'
