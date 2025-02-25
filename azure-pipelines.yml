@@ -26,7 +26,21 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
-
+- task: XplatGenerateReleaseNotes@4
+  inputs:
+    outputfile: '$(Build.ArtifactStagingDirectory)/releasenote_$(GitVersion.FullSemVer).md'
+    templateLocation: 'File'
+    templatefile: '$(Build.SourcesDirectory)/releasenote.md'
+    dumpPayloadToConsole: false
+    dumpPayloadToFile: false
+    replaceFile: True
+    getParentsAndChildren: False
+    getAllParents: False
+    getIndirectPullRequests: False
+    stopOnError: False
+    considerPartiallySuccessfulReleases: False
+    checkForManuallyLinkedWI: False
+    wiqlFromTarget: 'WorkItems'
 - task: DotNetCoreCLI@2
   displayName: 'Publish API Artifact'
   inputs:
