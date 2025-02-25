@@ -1,0 +1,63 @@
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  dotnetVersion: '8.0.x'  # Specify the .NET version your API uses
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    version: $(dotnetVersion)
+    performMultiLevelLookup: true
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.sln'
+    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build API Project'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: XplatGenerateReleaseNotes@4
+  inputs:
+    outputfile: '$(Build.ArtifactStagingDirectory)/releasenote_$(GitVersion.FullSemVer).md'
+    templateLocation: 'File'
+    templatefile: '$(Build.SourcesDirectory)/releasenote.md'
+    dumpPayloadToConsole: false
+    dumpPayloadToFile: false
+    replaceFile: True
+    getParentsAndChildren: False
+    getAllParents: False
+    getIndirectPullRequests: False
+    stopOnError: False
+    considerPartiallySuccessfulReleases: False
+    checkForManuallyLinkedWI: False
+    wiqlFromTarget: 'WorkItems'
+- task: DotNetCoreCLI@2
+  displayName: 'Publish API Artifact'
+  inputs:
+    command: 'publish'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    publishWebProjects: false
+    zipAfterPublish: true
+- task: runAnalysisTask@0
+  displayName: Run Analysis Task - For Technical Documentation
+  inputs:
+    projectName: 'Bubber Dinner API'
+    sourceDirectory: '$(Build.SourcesDirectory)'
+    outputFilePath: '$(Build.ArtifactStagingDirectory)/technical-documentation.json'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Build Artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
